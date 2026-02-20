@@ -9,10 +9,11 @@ interface ProviderCardProps {
   distance: string;
   description: string;
   available: boolean;
+  phone?: string;
   imageUrl?: string;
 }
 
-const ProviderCard = ({ id, name, category, distance, description, available, imageUrl }: ProviderCardProps) => {
+const ProviderCard = ({ id, name, category, distance, description, available, phone, imageUrl }: ProviderCardProps) => {
   return (
     <div className="flex gap-4 p-4 rounded-xl bg-card shadow-card hover:shadow-card-hover transition-all duration-300 animate-fade-in">
       <div className="w-16 h-16 rounded-xl bg-muted flex-shrink-0 overflow-hidden">
@@ -38,18 +39,28 @@ const ProviderCard = ({ id, name, category, distance, description, available, im
 
         <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
           <MapPin size={12} />
-          <span>{distance} away</span>
+          <span>{distance}</span>
         </div>
 
         <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{description}</p>
 
         <div className="flex gap-2 mt-3">
-          <Button size="sm" variant="default" className="gap-1.5 h-8 text-xs">
-            <Phone size={14} /> Call
-          </Button>
-          <Button size="sm" variant="outline" className="gap-1.5 h-8 text-xs">
-            <MessageCircle size={14} /> Message
-          </Button>
+          {phone ? (
+            <a href={`tel:${phone}`}>
+              <Button size="sm" variant="default" className="gap-1.5 h-8 text-xs">
+                <Phone size={14} /> Call
+              </Button>
+            </a>
+          ) : (
+            <Button size="sm" variant="default" className="gap-1.5 h-8 text-xs" disabled>
+              <Phone size={14} /> Call
+            </Button>
+          )}
+          <Link to={`/provider/${id}`}>
+            <Button size="sm" variant="outline" className="gap-1.5 h-8 text-xs">
+              <MessageCircle size={14} /> Message
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
