@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import CompleteProfile from "./pages/CompleteProfile";
 import SearchProviders from "./pages/SearchProviders";
 import ProviderProfile from "./pages/ProviderProfile";
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route path="/search" element={<SearchProviders />} />
             <Route path="/provider/:id" element={<ProviderProfile />} />
