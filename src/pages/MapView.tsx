@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect, useState, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
-import { Button } from "@/components/ui/button";
-import { Phone, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Phone } from "lucide-react";
 
 // Fix leaflet default marker icon
 const defaultIcon = L.icon({
@@ -32,7 +30,31 @@ interface ProviderOnMap {
 
 const MapView = () => {
   const [providers, setProviders] = useState<ProviderOnMap[]>([]);
-  const [center, setCenter] = useState<[number, number]>([33.6844, 73.0479]); // Default: Islamabad
+  const mapRef = useRef<L.Map | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
+
+    const map = L.map(mapContainerRef.current).setView([33.6844, 73.0479], 12);
+    mapRef.current = map;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
+
+    // Try user's location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        map.setView([pos.coords.latitude, pos.coords.longitude], 12);
+      });
+    }
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -80,51 +102,40 @@ const MapView = () => {
     };
 
     fetchProviders();
-
-    // Try to use user's location as center
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        setCenter([pos.coords.latitude, pos.coords.longitude]);
-      });
-    }
   }, []);
+
+  // Add markers when providers or map change
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || providers.length === 0) return;
+
+    const markers: L.Marker[] = [];
+    providers.forEach((p) => {
+      const marker = L.marker([p.location_lat, p.location_lng]).addTo(map);
+      marker.bindPopup(`
+        <div style="min-width:180px">
+          <h3 style="font-weight:600;font-size:14px;margin:0">${p.full_name}</h3>
+          <p style="font-size:12px;color:#666;margin:2px 0">${p.categories.join(", ")}</p>
+          ${p.description ? `<p style="font-size:12px;margin:4px 0">${p.description}</p>` : ""}
+          <div style="display:flex;gap:4px;margin-top:8px">
+            ${p.phone ? `<a href="tel:${p.phone}" style="font-size:12px;background:#f97316;color:white;padding:4px 8px;border-radius:4px;text-decoration:none">📞 Call</a>` : ""}
+            <a href="/provider/${p.user_id}" style="font-size:12px;background:#e5e7eb;padding:4px 8px;border-radius:4px;text-decoration:none">View</a>
+          </div>
+        </div>
+      `);
+      markers.push(marker);
+    });
+
+    return () => {
+      markers.forEach((m) => m.remove());
+    };
+  }, [providers]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1 relative">
-        <MapContainer
-          center={center}
-          zoom={12}
-          style={{ height: "calc(100vh - 64px)", width: "100%" }}
-          scrollWheelZoom
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {providers.map((p) => (
-            <Marker key={p.user_id} position={[p.location_lat, p.location_lng]}>
-              <Popup>
-                <div className="min-w-[180px]">
-                  <h3 className="font-semibold text-sm">{p.full_name}</h3>
-                  <p className="text-xs text-gray-500">{p.categories.join(", ")}</p>
-                  {p.description && <p className="text-xs mt-1">{p.description}</p>}
-                  <div className="flex gap-1 mt-2">
-                    {p.phone && (
-                      <a href={`tel:${p.phone}`} className="text-xs bg-orange-500 text-white px-2 py-1 rounded inline-flex items-center gap-1">
-                        <Phone size={12} /> Call
-                      </a>
-                    )}
-                    <Link to={`/provider/${p.user_id}`} className="text-xs bg-gray-200 px-2 py-1 rounded">
-                      View
-                    </Link>
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+        <div ref={mapContainerRef} style={{ height: "calc(100vh - 64px)", width: "100%" }} />
       </main>
     </div>
   );
