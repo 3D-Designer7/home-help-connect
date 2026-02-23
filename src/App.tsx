@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import CompleteProfile from "./pages/CompleteProfile";
 import SearchProviders from "./pages/SearchProviders";
 import ProviderProfile from "./pages/ProviderProfile";
 import ProviderSetup from "./pages/ProviderSetup";
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route path="/search" element={<SearchProviders />} />
             <Route path="/provider/:id" element={<ProviderProfile />} />
             <Route path="/provider-setup" element={<ProviderSetup />} />
