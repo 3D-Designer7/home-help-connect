@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -33,6 +33,11 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
+              {isAdmin && (
+                <Link to="/admin">
+                  <Button variant="ghost" size="sm">Admin</Button>
+                </Link>
+              )}
               <Link to="/dashboard">
                 <Button variant="ghost" size="sm">Dashboard</Button>
               </Link>
@@ -59,6 +64,11 @@ const Header = () => {
           <div className="flex gap-2 pt-2">
             {user ? (
               <>
+                {isAdmin && (
+                  <Link to="/admin" className="flex-1" onClick={() => setMobileOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full">Admin</Button>
+                  </Link>
+                )}
                 <Link to="/dashboard" className="flex-1" onClick={() => setMobileOpen(false)}>
                   <Button variant="ghost" size="sm" className="w-full">Dashboard</Button>
                 </Link>

@@ -26,10 +26,28 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("google", {
+      const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
       });
-      if (error) throw error;
+      if (result.error) throw result.error;
+      // If not redirected (token flow), navigate
+      if (!result.redirected) {
+        // Wait for auth state to settle
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          // Check if profile is complete
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("phone")
+            .eq("user_id", session.user.id)
+            .single();
+          if (!profile?.phone) {
+            navigate("/complete-profile");
+          } else {
+            navigate("/");
+          }
+        }
+      }
     } catch (err: any) {
       toast.error(err.message || "Google sign-in failed");
       setGoogleLoading(false);
