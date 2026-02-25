@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
+import logo from "@/assets/logo.png"; // ✅ Logo added
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ const Auth = () => {
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState<"customer" | "provider">("customer");
 
-  // ✅ Only this changed (Lovable removed)
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
@@ -94,15 +94,10 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Link to="/" className="flex items-center gap-2 justify-center mb-8">
-          <div className="w-9 h-9 rounded-lg bg-hero-gradient flex items-center justify-center">
-            <span className="text-primary-foreground font-display font-bold text-lg">
-              H
-            </span>
-          </div>
-          <span className="font-display font-bold text-xl text-foreground">
-            HomeFix
-          </span>
+        
+        {/* ✅ Logo Replaced Here */}
+        <Link to="/" className="flex justify-center mb-8">
+          <img src={logo} alt="HomeFix Logo" className="h-16 w-auto" />
         </Link>
 
         <div className="bg-card rounded-2xl shadow-card p-8">
@@ -150,7 +145,6 @@ const Auth = () => {
                 {isLogin ? "Sign in to your account" : "Join HomeFix today"}
               </p>
 
-              {/* Google Sign-In */}
               <Button
                 variant="outline"
                 className="w-full mt-6 gap-2"
@@ -247,15 +241,16 @@ const Auth = () => {
                     placeholder="••••••••"
                   />
                 </div>
+
                 {isLogin && (
-  <button
-    type="button"
-    onClick={() => setIsForgotPassword(true)}
-    className="text-sm text-primary hover:underline -mt-2 block"
-  >
-    Forgot password?
-  </button>
-)}
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotPassword(true)}
+                    className="text-sm text-primary hover:underline -mt-2 block"
+                  >
+                    Forgot password?
+                  </button>
+                )}
 
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
