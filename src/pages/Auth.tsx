@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
-import logo from "@/assets/logo.png"; // ✅ Logo added
+import logo from "@/assets/Logo.png"; // ✅ Logo added
 
 const Auth = () => {
   const navigate = useNavigate();
