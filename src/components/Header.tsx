@@ -3,7 +3,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import logo from "@/assets/logo.png"; // ✅ added
+import logo from "@/assets/Logo.png"; // ✅ added
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
