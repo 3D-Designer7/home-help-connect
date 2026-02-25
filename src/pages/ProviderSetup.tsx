@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 const ProviderSetup = () => {
@@ -42,20 +41,28 @@ const ProviderSetup = () => {
 
   const toggleCategory = (id: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((c) => c !== id)
+        : [...prev, id]
     );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || selectedCategories.length === 0) {
+
+    if (!user) {
+      toast.error("You must be logged in");
+      return;
+    }
+
+    if (selectedCategories.length === 0) {
       toast.error("Please select at least one category");
       return;
     }
+
     setLoading(true);
 
     try {
-      // Update provider details
       const { error: detailsError } = await supabase
         .from("provider_details")
         .update({
@@ -69,7 +76,6 @@ const ProviderSetup = () => {
 
       if (detailsError) throw detailsError;
 
-      // Insert provider categories
       const categoryInserts = selectedCategories.map((cid) => ({
         user_id: user.id,
         category_id: cid,
@@ -94,8 +100,12 @@ const ProviderSetup = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container py-8 max-w-lg">
-        <h1 className="font-display font-bold text-2xl text-foreground">Set Up Your Profile</h1>
-        <p className="text-muted-foreground text-sm mt-1">Complete your provider profile to start receiving customers</p>
+        <h1 className="font-display font-bold text-2xl text-foreground">
+          Set Up Your Profile
+        </h1>
+        <p className="text-muted-foreground text-sm mt-1">
+          Complete your provider profile to start receiving customers
+        </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div>
@@ -120,21 +130,47 @@ const ProviderSetup = () => {
 
           <div>
             <Label htmlFor="description">Work Description</Label>
-            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe your services..." rows={3} />
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe your services..."
+              rows={3}
+            />
           </div>
 
           <div>
             <Label htmlFor="experience">Years of Experience</Label>
-            <Input id="experience" type="number" min="0" value={experience} onChange={(e) => setExperience(e.target.value)} />
+            <Input
+              id="experience"
+              type="number"
+              min="0"
+              value={experience}
+              onChange={(e) => setExperience(e.target.value)}
+            />
           </div>
 
           <div>
             <Label>Location</Label>
             <div className="flex gap-2 mt-1.5">
-              <Input placeholder="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} />
-              <Input placeholder="Longitude" value={lng} onChange={(e) => setLng(e.target.value)} />
+              <Input
+                placeholder="Latitude"
+                value={lat}
+                onChange={(e) => setLat(e.target.value)}
+              />
+              <Input
+                placeholder="Longitude"
+                value={lng}
+                onChange={(e) => setLng(e.target.value)}
+              />
             </div>
-            <Button type="button" variant="outline" size="sm" className="mt-2" onClick={useCurrentLocation}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={useCurrentLocation}
+            >
               📍 Use Current Location
             </Button>
           </div>
