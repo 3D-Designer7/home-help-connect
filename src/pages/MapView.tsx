@@ -6,6 +6,28 @@ import Header from "@/components/Header";
 import { Link } from "react-router-dom";
 import { Phone } from "lucide-react";
 
+// Category icon map (lucide icon name -> emoji for map markers)
+const categoryEmojiMap: Record<string, string> = {
+  wind: "❄️",        // AC Technician
+  pipette: "🚰",     // Drainage
+  zap: "⚡",          // Electrician
+  wrench: "🔧",      // Metal Worker
+  droplets: "🔵",    // Plumber
+  flame: "🔥",       // Stove Repair
+  radio: "📡",       // Telecom
+  "tree-pine": "🪵", // Wood Worker
+};
+
+const createCategoryIcon = (emoji: string) => {
+  return L.divIcon({
+    html: `<div style="font-size:24px;line-height:1;text-align:center;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:white;border-radius:50%;border:2px solid hsl(24,95%,53%);box-shadow:0 2px 6px rgba(0,0,0,0.3)">${emoji}</div>`,
+    className: "",
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -36],
+  });
+};
+
 // Fix leaflet default marker icon
 const defaultIcon = L.icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -26,6 +48,7 @@ interface ProviderOnMap {
   location_lng: number;
   is_available: boolean;
   categories: string[];
+  category_icons: string[];
 }
 
 const MapView = () => {
@@ -74,15 +97,20 @@ const MapView = () => {
 
       const { data: provCats } = await supabase
         .from("provider_categories")
-        .select("user_id, category_id, categories(name)")
+        .select("user_id, category_id, categories(name, icon)")
         .in("user_id", userIds);
 
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]) || []);
       const catMap = new Map<string, string[]>();
+      const iconMap = new Map<string, string[]>();
       provCats?.forEach((pc: any) => {
-        const list = catMap.get(pc.user_id) || [];
-        list.push(pc.categories?.name || "");
-        catMap.set(pc.user_id, list);
+        const names = catMap.get(pc.user_id) || [];
+        names.push(pc.categories?.name || "");
+        catMap.set(pc.user_id, names);
+
+        const icons = iconMap.get(pc.user_id) || [];
+        icons.push(pc.categories?.icon || "wrench");
+        iconMap.set(pc.user_id, icons);
       });
 
       const result: ProviderOnMap[] = details
@@ -96,6 +124,7 @@ const MapView = () => {
           location_lng: d.location_lng!,
           is_available: d.is_available ?? true,
           categories: catMap.get(d.user_id) || [],
+          category_icons: iconMap.get(d.user_id) || [],
         }));
 
       setProviders(result);
@@ -111,7 +140,10 @@ const MapView = () => {
 
     const markers: L.Marker[] = [];
     providers.forEach((p) => {
-      const marker = L.marker([p.location_lat, p.location_lng]).addTo(map);
+      const iconKey = p.category_icons[0] || "wrench";
+      const emoji = categoryEmojiMap[iconKey] || "🔧";
+      const markerIcon = createCategoryIcon(emoji);
+      const marker = L.marker([p.location_lat, p.location_lng], { icon: markerIcon }).addTo(map);
       marker.bindPopup(`
         <div style="min-width:180px">
           <h3 style="font-weight:600;font-size:14px;margin:0">${p.full_name}</h3>
