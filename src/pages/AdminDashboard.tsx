@@ -40,7 +40,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
-      navigate("/");
+      navigate("/admin");
     }
   }, [user, isAdmin, authLoading, navigate]);
 

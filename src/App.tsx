@@ -12,6 +12,7 @@ import SearchProviders from "./pages/SearchProviders";
 import ProviderProfile from "./pages/ProviderProfile";
 import ProviderSetup from "./pages/ProviderSetup";
 import Dashboard from "./pages/Dashboard";
+import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import Chat from "./pages/Chat";
 import MapView from "./pages/MapView";
@@ -35,7 +36,8 @@ const App = () => (
             <Route path="/provider/:id" element={<ProviderProfile />} />
             <Route path="/provider-setup" element={<ProviderSetup />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/chat/:conversationId" element={<Chat />} />
             <Route path="/map" element={<MapView />} />
             <Route path="*" element={<NotFound />} />
