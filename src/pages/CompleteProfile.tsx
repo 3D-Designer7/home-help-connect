@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import PhoneInput from "@/components/PhoneInput";
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
@@ -94,7 +95,7 @@ const CompleteProfile = () => {
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="+1234567890" />
+              <PhoneInput value={phone} onChange={setPhone} required />
             </div>
             <div>
               <Label>I am a...</Label>

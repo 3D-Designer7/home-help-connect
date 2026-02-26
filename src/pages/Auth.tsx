@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
-import logo from "@/assets/Logo.png"; // ✅ Logo added
+import logo from "@/assets/Logo.png";
+import PhoneInput from "@/components/PhoneInput";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -181,12 +182,7 @@ const Auth = () => {
 
                     <div>
                       <Label>Phone Number</Label>
-                      <Input
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        required
-                        placeholder="+1234567890"
-                      />
+                      <PhoneInput value={phone} onChange={setPhone} required />
                     </div>
 
                     <div>

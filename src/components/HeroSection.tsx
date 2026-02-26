@@ -1,7 +1,8 @@
-import { Search, MapPin } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
+import LocationSearch from "@/components/LocationSearch";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -27,14 +28,7 @@ const HeroSection = () => {
           className="mt-8 flex flex-col sm:flex-row items-center gap-3 max-w-lg mx-auto animate-fade-in"
           style={{ animationDelay: "0.2s" }}
         >
-          <div className="flex items-center gap-2 flex-1 w-full bg-card rounded-lg px-4 py-3 shadow-hero">
-            <MapPin size={18} className="text-muted-foreground flex-shrink-0" />
-            <input
-              type="text"
-              placeholder="Enter your location..."
-              className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none w-full"
-            />
-          </div>
+          <LocationSearch onSelect={() => {}} />
           <Button
             size="lg"
             className="w-full sm:w-auto gap-2 shadow-hero"
