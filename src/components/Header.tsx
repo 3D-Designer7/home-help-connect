@@ -47,10 +47,10 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link to="/auth">
+              <Link to="/auth?mode=login">
                 <Button variant="ghost" size="sm">Log In</Button>
               </Link>
-              <Link to="/auth">
+              <Link to="/auth?mode=signup">
                 <Button size="sm">Sign Up</Button>
               </Link>
             </>
@@ -98,11 +98,14 @@ const Header = () => {
                 </Button>
               </>
             ) : (
-              <Link to="/auth" className="flex-1" onClick={() => setMobileOpen(false)}>
-                <Button size="sm" className="w-full">
-                  Sign In
-                </Button>
+              <>
+              <Link to="/auth?mode=login" className="flex-1" onClick={() => setMobileOpen(false)}>
+                <Button variant="ghost" size="sm" className="w-full">Log In</Button>
               </Link>
+              <Link to="/auth?mode=signup" className="flex-1" onClick={() => setMobileOpen(false)}>
+                <Button size="sm" className="w-full">Sign Up</Button>
+              </Link>
+              </>
             )}
           </div>
         </div>
