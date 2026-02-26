@@ -17,10 +17,11 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data: authData, error: authError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
     if (authError || !authData.user) {
       toast.error(authError?.message || "Login failed");
@@ -28,15 +29,14 @@ const AdminLogin = () => {
       return;
     }
 
-    // Check if user has admin role
-    const { data: roles } = await supabase
-      .from("user_roles")
+    // ✅ FIX: Check admin role from profiles table
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
       .select("role")
-      .eq("user_id", authData.user.id);
+      .eq("user_id", authData.user.id)
+      .single();
 
-    const isAdmin = roles?.some((r) => r.role === "admin");
-
-    if (!isAdmin) {
+    if (profileError || profile?.role !== "admin") {
       await supabase.auth.signOut();
       toast.error("Access denied. Admin privileges required.");
       setLoading(false);
@@ -55,11 +55,18 @@ const AdminLogin = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Shield className="text-primary" size={32} />
           </div>
-          <h1 className="font-display font-bold text-2xl text-foreground">Admin Portal</h1>
-          <p className="text-sm text-muted-foreground mt-1">Sign in with your admin credentials</p>
+          <h1 className="font-display font-bold text-2xl text-foreground">
+            Admin Portal
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Sign in with your admin credentials
+          </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4 bg-card p-6 rounded-xl shadow-card border border-border">
+        <form
+          onSubmit={handleLogin}
+          className="space-y-4 bg-card p-6 rounded-xl shadow-card border border-border"
+        >
           <div>
             <Label htmlFor="email">Email</Label>
             <Input

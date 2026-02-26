@@ -2,8 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -19,6 +19,21 @@ import MapView from "./pages/MapView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+/* ✅ NEW: Admin Route Protection */
+const AdminRoute = ({ children }: { children: JSX.Element }) => {
+  const { user, profile, loading } = useAuth();
+
+  if (loading) return null;
+
+  if (!user) return <Navigate to="/admin" />;
+
+  if (profile?.role !== "admin") {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -37,7 +52,17 @@ const App = () => (
             <Route path="/provider-setup" element={<ProviderSetup />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+            {/* ✅ Protected Admin Dashboard */}
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
+
             <Route path="/chat/:conversationId" element={<Chat />} />
             <Route path="/map" element={<MapView />} />
             <Route path="*" element={<NotFound />} />
