@@ -147,7 +147,7 @@ const ProviderProfile = () => {
 
           <div className="flex gap-3 mt-8">
             {provider.phone && (
-              <a href={`tel:${provider.phone}`} className="flex-1">
+              <a href={`tel:${provider.phone.replace(/\s/g, '')}`} className="flex-1">
                 <Button className="w-full gap-2" size="lg">
                   <Phone size={18} /> Call Now
                 </Button>
